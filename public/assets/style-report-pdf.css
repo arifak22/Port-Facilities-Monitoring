@@ -1,0 +1,31 @@
+
+body {
+    background-color: #fff;
+    /* margin: 10px; */
+    /* font: 12px/20px normal Arial; */
+    font-family: Arial, Helvetica, sans-serif;
+    color: #4F5155;
+}
+
+/* TABLES */
+.table1 {
+border-collapse: collapse;
+}
+
+.table1, .table1 th, .table1 td {
+    border: 1px solid black;
+}
+.table1 th{
+    padding: 10px;
+}
+.table1 td{
+    padding: 5px;
+}
+
+#body {
+    /* margin: 0 15px 0 15px; */
+}
+
+#container {
+    /* width:100%; */
+}
