@@ -514,7 +514,8 @@
 
 		#PATH URL
 		public static function storageUrl($path=''){
-			return 'https://app.pel.co.id/faspel/storage/app/'.$path;
+			return url('/storage/app/' . $path);
+			// return 'https://app.pel.co.id/faspel/storage/app/'.$path;
 		}
 		
 		#TEMPLATE URL
@@ -524,7 +525,7 @@
 
 		#CUSTOM URL
 		public static function customUrl($path=''){
-			return url('/assets/custom/' . $path);
+			return url('/public/assets/custom/' . $path);
 		}
 
 		#VALIDASI

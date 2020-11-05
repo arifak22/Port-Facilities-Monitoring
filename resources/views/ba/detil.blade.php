@@ -210,7 +210,7 @@
                 `<tr>
                     <td width="50%" valign="middle">
                         <div style="position: relative;">
-                            <img width="100%" src="{{Pel::storageUrl()}}${v}" id="here${i}"/>
+                            <img width="100%" src="{{Pel::storageUrl()}}/${v}" id="here${i}"/>
                         </div>
                     </td>
                 </tr>`);

@@ -85,6 +85,7 @@ class MasterController extends MiddleController
         $id_sub_cluster = $this->input('id_sub_cluster', 'required');
         $fasilitas      = $this->input('fasilitas', 'required');
         $status         = $this->input('status', 'required');
+        $keterangan     = $this->input('keterangan');
 
         #CEK VALID
         if($this->validator()){
@@ -106,6 +107,7 @@ class MasterController extends MiddleController
         $save['nama_fasilitas'] = $fasilitas;
         $save['status']         = $status;
         $save['gambar']         = $gambar['filename'];
+        $save['keterangan']     = $keterangan;
         DB::table('fasilitas')->insert($save);
 
         $saveObject['id_sub_cluster'] = $id_sub_cluster;
@@ -125,6 +127,7 @@ class MasterController extends MiddleController
         $id_fasilitas   = $this->input('id_fasilitas', 'required');
         $fasilitas      = $this->input('fasilitas', 'required');
         $status         = $this->input('status', 'required');
+        $keterangan     = $this->input('keterangan');
 
         #CEK VALID
         if($this->validator()){
@@ -144,6 +147,7 @@ class MasterController extends MiddleController
         if($gambar['filename']){
             $save['gambar']       = $gambar['filename'];
         }
+        $save['keterangan']     = $keterangan;
         DB::table('fasilitas')->where('id_fasilitas', $id_fasilitas)->update($save);
 
         $saveObject['active']         = $status;
@@ -263,7 +267,7 @@ class MasterController extends MiddleController
             return  $this->validator(true);
         }
         $res['data']        = DB::table('object_subcluster')
-            ->select('nama_fasilitas','id_inspection', 'object_subcluster.id_fasilitas','active')
+            ->select('nama_fasilitas','id_inspection', 'object_subcluster.id_fasilitas','active', 'keterangan')
             ->join('fasilitas', 'fasilitas.id_fasilitas','=','object_subcluster.id_fasilitas')
             ->where('id_inspection', $id)->first();
         $res['api_status']  = 1;
@@ -279,7 +283,7 @@ class MasterController extends MiddleController
         }
         $data['no'] = 1;
         $data['data'] = DB::table('object_subcluster')
-            ->select('object_subcluster.id_fasilitas', 'active', 'id_inspection', 'nama_fasilitas', 'gambar')
+            ->select('object_subcluster.id_fasilitas', 'active', 'id_inspection', 'nama_fasilitas', 'gambar', 'keterangan')
             ->join('fasilitas', 'fasilitas.id_fasilitas','=','object_subcluster.id_fasilitas')
             ->where('id_sub_cluster', $id)->get();
         $data['id'] = $id;

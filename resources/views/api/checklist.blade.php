@@ -29,8 +29,10 @@
                   <td>
                     @if($item->gambar)
                     <a class="open-img" href="" onclick="openimg('{{$item->gambar}}')">{{$item->nama_fasilitas}}</a>
+                    <br/> {{$item->keterangan}}
                     @else
-                    {{$item->nama_fasilitas}}
+                    {{$item->nama_fasilitas}} 
+                    <br/> {{$item->keterangan}}
                     @endif
                   </td>
                   <td>{!!Pel::defaultSelect('kondisi',$kondisi,"kondisi[".$item->id_inspection."]")!!}</td>
@@ -78,7 +80,7 @@
   function openimg(id){
     if(id){
       $('#modal-img').modal('show');
-      $('.image-show').attr('src', '{{Pel::storageUrl()}}'+id);
+      $('.image-show').attr('src', '{{Pel::storageUrl()}}/'+id);
     }
   }
     $('#view-table').DataTable();

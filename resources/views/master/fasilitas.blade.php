@@ -6,6 +6,7 @@
                 <th>Nama Fasilitas</th>
                 <th>Status</th>
                 <th>Gambar</th>
+                <th>Keterangan</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -21,6 +22,7 @@
                         array(array('name'=>'Aktif', 'value'=>'1'), array('name'=>'Tidak Aktif', 'value'=>'0')),
                         'status')!!}</td>
                     <td>{!!Pel::defaultFile('Gambar', 'gambar')!!}</td>
+                    <td>{!!Pel::defaultInput('Keterangan', 'text','keterangan')!!}</td>                    
                     <td>
                         <button id="addFasilitas" class="btn btn-success m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill btn-sm pull-right">
                             <span>
@@ -45,6 +47,7 @@
                 <td>{{$d->nama_fasilitas}}</td>
                 <td>{{$d->active ? 'Aktif' : 'Tidak Aktif'}}</td>
                 <td>{!!$d->gambar ?  "<a href=\"".Pel::storageUrl($d->gambar)."\" target=\"_blank\">File</a>": 'Kosong'!!}</td>
+                <td>{{$d->keterangan}}</td>
                 <td>
                     <button onclick="changeFasilitas({{$d->id_inspection}})" type="button" class="btn btn-warning m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill btn-sm pull-right">
                         <span>
@@ -237,6 +240,7 @@
                     $("#id_fasilitas").val(val.id_fasilitas);
                     $("#fasilitas").val(val.nama_fasilitas);
                     $("#status").val(val.active);
+                    $("#keterangan").val(val.keterangan);
                     $("#addFasilitas").hide();
                     $("#ubahFasilitas").show();
 

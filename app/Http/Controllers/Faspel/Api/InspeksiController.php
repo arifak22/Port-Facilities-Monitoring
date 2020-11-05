@@ -40,7 +40,7 @@ class InspeksiController extends MiddleController
         $sess = JWTAuth::parseToken()->getPayload();
         #AMBIL DATA FASILITAS
         $data = DB::table('object_subcluster')
-            ->select('object_subcluster.id_sub_cluster','nama_fasilitas', 'object_subcluster.id_fasilitas', 'mandatory', 'id_inspection', 'is_number', 'gambar')
+            ->select('object_subcluster.id_sub_cluster','nama_fasilitas', 'object_subcluster.id_fasilitas', 'mandatory', 'id_inspection', 'is_number', 'gambar', 'keterangan')
             ->join('fasilitas','fasilitas.id_fasilitas', '=', 'object_subcluster.id_fasilitas')
             ->where('object_subcluster.id_sub_cluster', $id)
             ->where('object_subcluster.active',1)

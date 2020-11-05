@@ -158,7 +158,7 @@ class Model
         return $res;
     }
 
-    public static function getListMT($status, $tipe, $cabang, $bulan){
+        public static function getListMT($status, $tipe, $cabang, $bulan){
         $query = DB::table('maintenances')
         ->select('id_mt','nama_lokasi','kode_cctv','nama_cctv','waktu','kegiatan','code_mt',
         'maintenances.created_at','ucreate.nama AS created_name','ufinish.nama AS finish_name',
@@ -182,5 +182,5 @@ class Model
         }
         $query->whereNull('maintenances.deleted_at');
         return $query;
-    }
+        }
 }
