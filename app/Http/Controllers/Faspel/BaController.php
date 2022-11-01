@@ -56,7 +56,7 @@ class BaController extends MiddleController
             ->select('nama_cabang','nama_cluster','nama_sub_cluster',
                 'createu.nama as nama_periksa','tanggal_periksa',
                 'createt.nama as nama_tanggapan', 'tanggal_tanggapan',
-                'createc.nama as nama_close', 'waktu_close',
+                'createc.nama as nama_close', 'waktu_close', 'subcluster.suhu', 'subcluster.getaran', 'subcluster.noise',
                 'flag')
             ->join('users as createu','createu.id','=','inspection_data.user_create')
             ->leftJoin('users as createt','createt.id','=','inspection_data.user_tanggapan')
@@ -66,7 +66,7 @@ class BaController extends MiddleController
             ->join('tsto','tsto.kd_cabang','=','cluster.kd_cabang')
             ->where('kode_periksa', $kode_periksa)->first();
         $dataInspeksiDetail = DB::table('inspection_data_detil')
-            ->select('nama_fasilitas','kondisi','inspection_data_detil.keterangan','foto')
+            ->select('nama_fasilitas','kondisi','inspection_data_detil.keterangan','foto', 'suhu', 'getaran', 'noise')
             ->join('object_subcluster','object_subcluster.id_inspection','inspection_data_detil.id_inspection')
             ->join('fasilitas','fasilitas.id_fasilitas','=','object_subcluster.id_fasilitas')
             ->where('kode_periksa', $kode_periksa)->get();

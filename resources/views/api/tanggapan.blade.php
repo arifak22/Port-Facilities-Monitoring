@@ -15,6 +15,21 @@
                 <th>
                     Keterangan
                 </th>
+                @if($data_sub->suhu)
+                <th>
+                    Suhu (&#8451;)
+                </th>
+                @endif
+                @if($data_sub->getaran)
+                <th>
+                    Getaran (Rpm)
+                </th>
+                @endif
+                @if($data_sub->noise)
+                <th>
+                    Noise (dbA)
+                </th>
+                @endif
                 <th>
                     Tanggapan
                 </th>
@@ -30,12 +45,23 @@
                     <td>{{$item->nama_fasilitas}}</td>
                     <td>{{$item->kondisi}}</td>
                     <td>{{$item->keterangan}}</td>
+
+                    @if($data_sub->suhu)
+                        <td>{!!$item->suhu ?  $item->suhu . ' &#8451;' : ''!!}</td>
+                    @endif
+                    @if($data_sub->getaran)
+                        <td>{!!$item->getaran ?  $item->getaran . ' Rpm' : ''!!}</td>
+                    @endif
+                    @if($data_sub->noise)
+                        <td>{!!$item->noise ?  $item->noise . ' dbA' : ''!!}</td>
+                    @endif
+                    
                     <td>@if($item->kondisi =='TIDAK BAIK')
                         {!!Pel::defaultInput('tanggapan','text',"tanggapan[".$item->id_inspection."]", $item->tanggapan)!!}
                         @endif
                     </td>
                     <td>@if($item->foto)
-                        <button onclick="lookFoto({{$item->foto}})" class="btn btn-success m-btn m-btn--icon m-btn--icon-only">
+                        <button type="button" onclick="lookFoto({{$item->foto}})" class="btn btn-success m-btn m-btn--icon m-btn--icon-only">
                             <i class="la la-file-photo-o"></i>
                         </button>
                         @endif
@@ -79,7 +105,7 @@
                 `<tr>
                     <td width="50%" valign="middle">
                         <div style="position: relative;">
-                            <img width="100%" src="{{Pel::storageUrl()}}${v}" id="here${i}"/>
+                            <img width="100%" src="{{Pel::storageUrl()}}/${v}" id="here${i}"/>
                         </div>
                     </td>
                 </tr>`);

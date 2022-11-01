@@ -143,6 +143,21 @@
                         <th>
                             Keterangan
                         </th>
+                        @if($inspeksi->suhu)
+                        <th>
+                            Suhu (&#8451;)
+                        </th>
+                        @endif
+                        @if($inspeksi->getaran)
+                        <th>
+                            Getaran (Rpm)
+                        </th>
+                        @endif
+                        @if($inspeksi->noise)
+                        <th>
+                            Noise (dbA)
+                        </th>
+                        @endif
                         <th width="5px">
                             
                         </th>
@@ -163,6 +178,15 @@
                             <td>
                                 {{$id->keterangan}}
                             </td>
+                            @if($inspeksi->suhu)
+                                <td>{!!$id->suhu ?  $id->suhu . ' &#8451;' : ''!!}</td>
+                            @endif
+                            @if($inspeksi->getaran)
+                            <td>{!!$id->getaran ?  $id->getaran . ' Rpm' : ''!!}</td>
+                            @endif
+                            @if($inspeksi->noise)
+                            <td>{!!$id->noise ?  $id->noise . ' dbA' : ''!!}</td>
+                            @endif
                             <td>
                             @if($id->foto)
                             <button onclick="lookFoto({{$id->foto}})" class="btn btn-success m-btn m-btn--icon m-btn--icon-only">

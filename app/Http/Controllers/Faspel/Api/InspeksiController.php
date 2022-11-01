@@ -47,10 +47,11 @@ class InspeksiController extends MiddleController
             ->get();
         #AMBIL CABANG
         $data_sub = DB::table('cluster')
-            ->select('kd_cabang','nama_sub_cluster')
+            ->select('kd_cabang','nama_sub_cluster', 'suhu', 'getaran', 'noise')
             ->join('subcluster','subcluster.id_cluster', '=', 'cluster.id_cluster')
             ->where('id_sub_cluster', $id)
             ->first();
+
 
         if(count($data) > 0){
             if($sess['device'] == 'web'){
@@ -91,16 +92,17 @@ class InspeksiController extends MiddleController
             return  $this->validator(true);
         }
         $data = DB::table('inspection_data_detil')
-            ->select('nama_fasilitas','kondisi','inspection_data_detil.keterangan','tanggapan','foto','inspection_data_detil.id_inspection')
+            ->select('nama_fasilitas','kondisi','inspection_data_detil.keterangan','object_subcluster.id_sub_cluster', 'tanggapan', 'suhu', 'getaran', 'noise','foto','inspection_data_detil.id_inspection')
             ->join('object_subcluster','object_subcluster.id_inspection', '=', 'inspection_data_detil.id_inspection')
             ->join('fasilitas','fasilitas.id_fasilitas', '=', 'object_subcluster.id_fasilitas')
             ->where('kode_periksa', $kode_periksa)->get();
+        $data_sub = DB::table('subcluster')->where('id_sub_cluster', $data[0]->id_sub_cluster)->first();
         if(count($data) > 0){
             if($sess['device'] == 'web'){
                 #AMBIL VIEW LIST UNTUK WEB
                 $out_data['data']         = $data;
                 $out_data['kode_periksa'] = $kode_periksa;
-
+                $out_data['data_sub']     = $data_sub;
                 $output = view('api/tanggapan', $out_data)->render();
                 $this->res['html']        = $output;
             }
@@ -123,6 +125,9 @@ class InspeksiController extends MiddleController
         $kd_cabang  = $this->input('kd_cabang', 'required');
         $kondisi    = $this->input('kondisi');
         $keterangan = $this->input('keterangan');
+        $suhu       = $this->input('suhu');
+        $getaran    = $this->input('getaran');
+        $noise      = $this->input('noise');
         $file       = $this->input('file');
         $sess       = JWTAuth::parseToken()->getPayload();
         #CEK VALID
@@ -165,6 +170,9 @@ class InspeksiController extends MiddleController
                 $save_detail[$i]['kode_periksa']  = $kode_periksa;
                 $save_detail[$i]['kondisi']       = $kondisi[$key];
                 $save_detail[$i]['keterangan']    = $keterangan[$key];
+                $save_detail[$i]['suhu']          = $suhu[$key];
+                $save_detail[$i]['getaran']       = $getaran[$key];
+                $save_detail[$i]['noise']         = $noise[$key];
                 $save_detail[$i]['flag']          = $k == 'BAIK' ? 1 : 0;
                 if(!empty($file[$key])){
                     $foto                       = $foto_baru;

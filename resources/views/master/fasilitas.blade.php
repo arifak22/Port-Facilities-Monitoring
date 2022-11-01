@@ -21,7 +21,7 @@
                     <td>{!!Pel::defaultSelect('Status', 
                         array(array('name'=>'Aktif', 'value'=>'1'), array('name'=>'Tidak Aktif', 'value'=>'0')),
                         'status')!!}</td>
-                    <td>{!!Pel::defaultFile('Gambar', 'gambar')!!}</td>
+                    <td></td>
                     <td>{!!Pel::defaultInput('Keterangan', 'text','keterangan')!!}</td>                    
                     <td>
                         <button id="addFasilitas" class="btn btn-success m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill btn-sm pull-right">
@@ -46,7 +46,22 @@
                 <td>{{$no++}}</td>
                 <td>{{$d->nama_fasilitas}}</td>
                 <td>{{$d->active ? 'Aktif' : 'Tidak Aktif'}}</td>
-                <td>{!!$d->gambar ?  "<a href=\"".Pel::storageUrl($d->gambar)."\" target=\"_blank\">File</a>": 'Kosong'!!}</td>
+                <td>
+                    <input id='fileid-{{$d->id_fasilitas}}' type='file' accept="image/*" hidden/>
+                    <button onclick="addGambar({{$d->id_fasilitas}})" type="button" class="btn btn-info m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill btn-sm pull-right">
+                        Add Gambar
+                    </button>
+                    @if($d->gambar)
+                    <ul>
+                        @foreach(json_decode($d->gambar) as $g)
+                            <li>
+                                <a href="{{Pel::storageUrl($g)}}" target="_blank">File</a> - 
+                                <a style="color:red" onclick="hapusFoto('{{$d->id_fasilitas}}','{{$g}}', event)" href="">x</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                    @endif
+                </td>
                 <td>{{$d->keterangan}}</td>
                 <td>
                     <button onclick="changeFasilitas({{$d->id_inspection}})" type="button" class="btn btn-warning m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill btn-sm pull-right">
@@ -229,6 +244,91 @@
             }
         })
     }
+    var uuid = 0;
+    function addGambar(id){
+        uuid = id;
+        $("#fileid-"+id).click();
+        $("#fileid-"+id).change(function (){
+            const imageCompressor = new ImageCompressor();
+            var i = 0;
+            var type = $(this)[0].files[i].type;
+            var size = $(this)[0].files[i].size;
+            if (type == "image/jpeg" || type == "image/png") {
+                if (size > 2097152*3) {
+                    $(this)[0].value = ""
+                    swal({
+                        title: "Failed!",
+                        text: "Gambar tidak boleh melebihi 6MB",
+                        type: "error"
+                    });
+                } else {
+                    imageCompressor.compress($(this)[0].files[i], {
+                        quality: .8,
+                        maxWidth: 1600,
+                        maxHeight: 1600
+                    })
+                    .then((result) => {
+                        $(this)[0].files[i] =null;
+                        $(this)[0].value =null;
+                        $(".custom-file-label").html('');
+                        var formData = new FormData();
+                        formData.append('id_fasilitas', uuid);
+                        formData.append('gambar', result);
+                        formData.append('_token', "{{ csrf_token() }}");
+                        $.ajax({
+                            url : "{{url('master/add-gambar-fasilitas')}}",
+                            type : 'POST',
+                            data : formData,
+                            processData: false,  // tell jQuery not to process the data
+                            contentType: false,  // tell jQuery not to set contentType
+                            success : function(data) {
+                                swal({
+                                    title: "Success!",
+                                    text: "Gambar Berhasil di upload.",
+                                    type: "success"
+                                }).then((result) => {
+                                    if (result.value) {
+                                        refreshModal();
+                                    }
+                                });
+                            }
+                        });
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }
+            } else {
+                $(this)[0].value = ""
+                swal({
+                    title: "Failed!",
+                    text: "Hanya bisa berupa gambar jpg dan png",
+                    type: "error"
+                });
+            }
+        });
+    }
+
+    function hapusFoto(id_fasilitas, nama, e){
+        e.preventDefault();
+        $.ajax({
+            url : "{{url('master/hapus-gambar-fasilitas')}}",
+            data: { id_fasilitas: id_fasilitas, nama: nama, _token: "{{ csrf_token() }}" },
+            type: 'POST',
+            success: function(res, status, xhr, $form) {
+                swal({
+                    title: "Success!",
+                    text: "Gambar Berhasil di hapus.",
+                    type: "success"
+                }).then((result) => {
+                    if (result.value) {
+                        refreshModal();
+                    }
+                });
+            }
+        });
+    }
+
+     
     function changeFasilitas(id){
         $.ajax({
             url : "{{url('master/ubah-fasilitas')}}",

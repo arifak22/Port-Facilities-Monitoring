@@ -47,7 +47,8 @@ class HomeController extends MiddleController
     }
 
     public function getDua(){
-        print_r(Request::session()->get('access'));
+        // print_r(Request::session()->get('access'));
+        print_r(Hash::make('admin'));
     }
 
     public function postGantiPassword(){

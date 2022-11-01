@@ -14,6 +14,21 @@
                 <th>
                     Kondisi
                 </th>
+                @if($data_sub->suhu)
+                <th>
+                    Suhu (&#8451;)
+                </th>
+                @endif
+                @if($data_sub->getaran)
+                <th>
+                    Getaran (Rpm)
+                </th>
+                @endif
+                @if($data_sub->noise)
+                <th>
+                    Noise (dbA)
+                </th>
+                @endif
                 <th>
                     Keterangan
                 </th>
@@ -36,6 +51,25 @@
                     @endif
                   </td>
                   <td>{!!Pel::defaultSelect('kondisi',$kondisi,"kondisi[".$item->id_inspection."]")!!}</td>
+
+                  @if($data_sub->suhu)
+                    <td>{!!Pel::defaultInput('suhu','number',"suhu[".$item->id_inspection."]")!!}</td>
+                  @else
+                    {!!Pel::formHidden('suhu')!!}
+                  @endif
+
+                  @if($data_sub->getaran)
+                    <td>{!!Pel::defaultInput('getaran','number',"getaran[".$item->id_inspection."]")!!}</td>
+                  @else
+                    {!!Pel::formHidden('getaran')!!}
+                  @endif
+                  
+                  @if($data_sub->noise)
+                    <td>{!!Pel::defaultInput('noise','number',"noise[".$item->id_inspection."]")!!}</td>
+                  @else
+                    {!!Pel::formHidden('noise')!!}
+                  @endif
+                  
                   <td>{!!Pel::defaultInput('keterangan','text',"keterangan[".$item->id_inspection."]")!!}</td>
                   <td><button type="button" onclick="showModal('{{$item->id_inspection}}')" class="btn btn-success m-btn m-btn--custom m-btn--icon m-btn--air m-btn--pill btn-sm">
                     <span>
@@ -69,6 +103,7 @@
       </div>
       <div class="modal-body">
           <img width="100%" class="image-show" />
+          <center><div id="page-list"></div></center>
       </div>
     </div>
   </div>
@@ -77,12 +112,26 @@
   $(".open-img").click(function(e){
     e.preventDefault();
   })
+  let list_gambar = [];
   function openimg(id){
     if(id){
+      let list = JSON.parse(id);
+      list_gambar = id;
+      html = "";
+      list.forEach((value, index) => {
+        no = index + 1;
+        html += `  <a style="font-size:18px; margin-right:10px;" href="#" onclick="toPage(${index})">${no}</a>  `;
+      });
+      $("#page-list").html(html);
       $('#modal-img').modal('show');
-      $('.image-show').attr('src', '{{Pel::storageUrl()}}/'+id);
+      $('.image-show').attr('src', '{{Pel::storageUrl()}}/'+JSON.parse(id)[0]);
     }
   }
+  
+  function toPage(nomor){
+      // e.preventDefault();
+      $('.image-show').attr('src', '{{Pel::storageUrl()}}/'+JSON.parse(list_gambar)[nomor]);
+    }
     $('#view-table').DataTable();
     $("#submit_check").click(function(e){
       e.preventDefault();

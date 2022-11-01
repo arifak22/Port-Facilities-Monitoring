@@ -84,6 +84,9 @@
         <div class="modal-body">
             <form>
                 {!!Pel::formInput('Sub Cluster','text','tSubCluster')!!}
+                {!!Pel::formSelect('Suhu', array(array('value'=>'1', 'name'=>'Ya'), array('value'=>'0', 'name'=>'Tidak')), 'tSuhu')!!}
+                {!!Pel::formSelect('Getaran', array(array('value'=>'1', 'name'=>'Ya'), array('value'=>'0', 'name'=>'Tidak')), 'tGetaran')!!}
+                {!!Pel::formSelect('Noise', array(array('value'=>'1', 'name'=>'Ya'), array('value'=>'0', 'name'=>'Tidak')), 'tNoise')!!}
                 <br/>
                 {!!Pel::formSubmit('Tambah','tambah-subcluster')!!}
             </form>
@@ -126,6 +129,9 @@
             <form>
                 <input type="hidden" name="uidSubCluster" id="uidSubCluster">
                 {!!Pel::formInput('Sub Cluster','text','uSubCluster')!!}
+                {!!Pel::formSelect('Suhu', array(array('value'=>'1', 'name'=>'Ya'), array('value'=>'0', 'name'=>'Tidak')), 'uSuhu')!!}
+                {!!Pel::formSelect('Getaran', array(array('value'=>'1', 'name'=>'Ya'), array('value'=>'0', 'name'=>'Tidak')), 'uGetaran')!!}
+                {!!Pel::formSelect('Noise', array(array('value'=>'1', 'name'=>'Ya'), array('value'=>'0', 'name'=>'Tidak')), 'uNoise')!!}
                 <br/>
                 {!!Pel::formSubmit('Ubah','ubah-subcluster')!!}
             </form>
@@ -238,6 +244,9 @@
                     $("#ubah_subcluster").modal('show');
                     $("#uidSubCluster").val(id);
                     $("#uSubCluster").val(res.data.nama_sub_cluster);
+                    $("#uSuhu").val(res.data.suhu);
+                    $("#uGetaran").val(res.data.getaran);
+                    $("#uNoise").val(res.data.noise);
                 }else{
                     swal({
                         title: "Failed!",
@@ -575,7 +584,7 @@
 
             },
             },
-            pageSize: 10,
+            pageSize: 100,
             serverPaging: true,
             serverFiltering: true,
             serverSorting: true,
@@ -612,6 +621,39 @@
             {
                 field: 'nama_sub_cluster',
                 title: 'Nama Sub Cluster',
+            },
+            {
+                field: 'suhu',
+                title: 'Suhu',
+                template: function (row, index, datatable){
+                    if(row.suhu == '1'){
+                        return 'Ya';
+                    }else{
+                        return 'Tidak';
+                    }
+                }
+            },
+            {
+                field: 'getaran',
+                title: 'Getaran',
+                template: function (row, index, datatable){
+                    if(row.getaran == '1'){
+                        return 'Ya';
+                    }else{
+                        return 'Tidak';
+                    }
+                }
+            },
+            {
+                field: 'noise',
+                title: 'Noise',
+                template: function (row, index, datatable){
+                    if(row.noise == '1'){
+                        return 'Ya';
+                    }else{
+                        return 'Tidak';
+                    }
+                }
             },
         ],
     });

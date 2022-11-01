@@ -249,13 +249,14 @@
                 field: 'jumlah',
                 title: 'Status',
                 template: function(row){
+                    let nilai = row.total - row.jumlah;
                     if(row.jumlah == row.total){
                         return `<span class="m-badge m-badge--warning m-badge--wide">
-                        Selesai ditanggapi ${row.jumlah + '/' + row.total}
+                        Selesai ditanggapi ${nilai + '/' + row.total}
                         </span>`; 
                     }
                     return `<span class="m-badge m-badge--danger m-badge--wide">
-                      Belum ditanggapi ${row.jumlah + '/' + row.total}
+                      Belum ditanggapi ${nilai + '/' + row.total}
                     </span>`;
                 }
             }, {

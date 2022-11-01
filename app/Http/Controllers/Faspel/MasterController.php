@@ -35,7 +35,7 @@ class MasterController extends MiddleController
     var $view       = 'master';
 
     public function getInspeksi(){
-        $cabang = DB::table('tsto')->select('kd_cabang','nama_cabang')->whereNotNull('kd_cabang')->get();
+        $cabang = DB::table('tsto')->select('kd_cabang','nama_cabang')->orderBy('nama_cabang')->whereNotNull('kd_cabang')->get();
         $this->data['title'] = $this->title. ' Inspeksi';
         $this->data['cabang'] = Pel::makeOption($cabang, 'kd_cabang', 'nama_cabang', false);
         return Pel::load($this->template, $this->view.'/inspeksi', $this->data);
@@ -62,8 +62,11 @@ class MasterController extends MiddleController
     }
 
     public function postTambahSubcluster(){
-        $cluster = $this->input('cluster', 'required');
-        $subcluster   = $this->input('tSubCluster', 'required');
+        $cluster    = $this->input('cluster', 'required');
+        $subcluster = $this->input('tSubCluster', 'required');
+        $suhu       = $this->input('tSuhu', 'required');
+        $getaran    = $this->input('tGetaran', 'required');
+        $noise      = $this->input('tNoise', 'required');
         #CEK VALID
         if($this->validator()){
             return  $this->validator(true);
@@ -74,6 +77,9 @@ class MasterController extends MiddleController
         $save['id_sub_cluster']   = $id_sub_cluster;
         $save['id_cluster']       = $cluster;
         $save['nama_sub_cluster'] = $subcluster;
+        $save['suhu']             = $suhu;
+        $save['getaran']          = $getaran;
+        $save['noise']            = $noise;
         DB::table('subcluster')->insert($save);
 
         $res['api_status']  = 1;
@@ -91,13 +97,13 @@ class MasterController extends MiddleController
         if($this->validator()){
             return  $this->validator(true);
         }
-        $config['allowed_type'] = 'png|jpeg|jpg';
-        $config['max_size']     = '9216';
-        $config['required']     = true;
-        $gambar = $this->uploadFile('gambar', 'fasilitas', Str::random(5).'-'.$id_sub_cluster, $config);
-        if(!$gambar['is_uploaded']){
-            return $this->api_output($gambar['msg']);
-        }
+        // $config['allowed_type'] = 'png|jpeg|jpg';
+        // $config['max_size']     = '9216';
+        // $config['required']     = true;
+        // $gambar = $this->uploadFile('gambar', 'fasilitas', Str::random(5).'-'.$id_sub_cluster, $config);
+        // if(!$gambar['is_uploaded']){
+        //     return $this->api_output($gambar['msg']);
+        // }
         #AMBIL SEQ
         $id_fasilitas  = Model::seq('fasilitas','id_fasilitas');
         $id_inspection = Model::seq('object_subcluster','id_inspection');
@@ -106,7 +112,7 @@ class MasterController extends MiddleController
         $save['id_fasilitas']   = $id_fasilitas;
         $save['nama_fasilitas'] = $fasilitas;
         $save['status']         = $status;
-        $save['gambar']         = $gambar['filename'];
+        // $save['gambar']         = $gambar['filename'];
         $save['keterangan']     = $keterangan;
         DB::table('fasilitas')->insert($save);
 
@@ -116,6 +122,52 @@ class MasterController extends MiddleController
         $saveObject['active']         = $status;
         $saveObject['id_inspection']  = $id_inspection;
         DB::table('object_subcluster')->insert($saveObject);
+
+        $res['api_status']  = 1;
+        $res['api_message'] = 'success';
+        return $this->api_output($res);
+    }
+
+    public function postAddGambarFasilitas(){
+        $id_fasilitas = $this->input('id_fasilitas');
+
+        $oldFoto = DB::table('fasilitas')->where('id_fasilitas', $id_fasilitas)->value('gambar');
+        $config['allowed_type'] = 'png|jpeg|jpg';
+        $config['max_size']     = '9216';
+        $config['required']     = true;
+        $gambar = $this->uploadFile('gambar', 'fasilitas', Str::random(5).'-'.$id_fasilitas, $config);
+        if(!$gambar['is_uploaded']){
+            return $this->api_output($gambar['msg']);
+        }
+        
+        if($oldFoto){
+            $foto = json_decode($oldFoto);
+            array_push($foto, $gambar['filename']);
+            $save['gambar'] = json_encode($foto);
+        }else{
+            $save['gambar'] = json_encode(array($gambar['filename']));
+        }
+        DB::table('fasilitas')->where('id_fasilitas', $id_fasilitas)->update($save);
+        
+        $res['api_status']  = 1;
+        $res['api_message'] = 'success';
+        return $this->api_output($res);
+    }
+    
+    public function postHapusGambarFasilitas(){
+        $id_fasilitas = $this->input('id_fasilitas');
+        $nama         = $this->input('nama');
+        $oldFoto = DB::table('fasilitas')->where('id_fasilitas', $id_fasilitas)->value('gambar');
+        $foto = json_decode($oldFoto);
+        if (($key = array_search($nama, $foto)) !== false) {
+            unset($foto[$key]);
+        }
+        if($foto){
+            $save['gambar'] = json_encode(array_values($foto));
+        }else{
+            $save['gambar'] = null;
+        }
+        DB::table('fasilitas')->where('id_fasilitas', $id_fasilitas)->update($save);
 
         $res['api_status']  = 1;
         $res['api_message'] = 'success';
@@ -173,12 +225,18 @@ class MasterController extends MiddleController
     public function postUbahSubcluster(){
         $id         = $this->input('uidSubCluster', 'required');
         $subcluster = $this->input('uSubCluster', 'required');
+        $suhu       = $this->input('uSuhu', 'required');
+        $getaran    = $this->input('uGetaran', 'required');
+        $noise      = $this->input('uNoise', 'required');
         #CEK VALID
         if($this->validator()){
             return  $this->validator(true);
         }
 
         $save['nama_sub_cluster'] = $subcluster;
+        $save['suhu']             = $suhu;
+        $save['getaran']          = $getaran;
+        $save['noise']            = $noise;
         DB::table('subcluster')->where('id_sub_cluster', $id)->update($save);
 
         $res['api_status']  = 1;
@@ -285,6 +343,8 @@ class MasterController extends MiddleController
         $data['data'] = DB::table('object_subcluster')
             ->select('object_subcluster.id_fasilitas', 'active', 'id_inspection', 'nama_fasilitas', 'gambar', 'keterangan')
             ->join('fasilitas', 'fasilitas.id_fasilitas','=','object_subcluster.id_fasilitas')
+            ->orderBy('nama_fasilitas')
+            ->orderBy('keterangan')
             ->where('id_sub_cluster', $id)->get();
         $data['id'] = $id;
         $output = view('master/fasilitas', $data)->render();
